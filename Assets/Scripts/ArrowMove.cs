@@ -1,15 +1,32 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class ArrowMove : MonoBehaviour
 {
+    [Header("Arrow Direction Settings")]
     public float swingAngle = 45f;
     public float swingSpeed = 1f;
-    public float ballSpeed = 20f;
-    public GameObject ball;
+
+    [Header("Ball Settings")]
+    public Rigidbody ballRb;                  // Rigidbody for physics-based shooting
+    public float minPower = 5f;
+    public float maxPower = 30f;
+    public float upwardForceMultiplier = 0.5f;
+
+    [Header("Power Meter UI")]
     public GameObject powerMeter;
+    public RectTransform powerArrow;
+    public float powerSpeed = 200f;
+    public float powerTop = 150f;
+    public float powerBottom = -150f;
 
     private float initialYRotation;
+    private bool isPowerSelecting = false;
     private bool isShooting = false;
+    private bool powerGoingUp = true;
+    private float currentPower = 0f;
+    private float actualForce = 0f;
     private Vector3 shootDirection;
 
     void Start()
@@ -20,31 +37,90 @@ public class ArrowMove : MonoBehaviour
 
     void Update()
     {
-        if (!isShooting)
+        if (!isShooting && !isPowerSelecting)
         {
-            // Arrow swinging
+            // Swinging arrow
             float angle = Mathf.Sin(Time.time * swingSpeed) * swingAngle;
             transform.rotation = Quaternion.Euler(0f, initialYRotation + angle, 0f);
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                // Stop swinging and prepare to shoot
                 swingSpeed = 0;
                 shootDirection = transform.forward;
-                ball.transform.rotation = transform.rotation;
-                PowerMeter();
+                StartPowerMeter();
             }
         }
-        else
+        else if (isPowerSelecting)
         {
-            // Move ball forward
-            ball.transform.position += shootDirection * ballSpeed * Time.deltaTime;
+            MovePowerArrow();
+
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                StopPowerMeter();
+                ShootBall();
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            SceneManager.LoadScene(0);
         }
     }
 
-    void PowerMeter()
+    void StartPowerMeter()
     {
+        isPowerSelecting = true;
         powerMeter.SetActive(true);
+        powerArrow.anchoredPosition = new Vector2(powerArrow.anchoredPosition.x, powerBottom);
+        powerGoingUp = true;
+    }
+
+    void MovePowerArrow()
+    {
+        Vector2 pos = powerArrow.anchoredPosition;
+        float move = powerSpeed * Time.deltaTime * (powerGoingUp ? 1 : -1);
+        pos.y += move;
+
+        if (pos.y >= powerTop)
+        {
+            pos.y = powerTop;
+            powerGoingUp = false;
+        }
+        else if (pos.y <= powerBottom)
+        {
+            pos.y = powerBottom;
+            powerGoingUp = true;
+        }
+
+        powerArrow.anchoredPosition = pos;
+    }
+
+    void StopPowerMeter()
+    {
+        isPowerSelecting = false;
+        powerMeter.SetActive(false);
+
+        // Convert arrow height to 0–1 power value
+        currentPower = Mathf.InverseLerp(powerBottom, powerTop, powerArrow.anchoredPosition.y);
+
+        // Map power to actual shot force
+        actualForce = Mathf.Lerp(minPower, maxPower, currentPower);
+
+        Debug.Log($"Power: {currentPower:F2}, Force: {actualForce:F2}");
+    }
+
+    void ShootBall()
+    {
+        isShooting = true;
+
+        // Reset ball velocity
+        ballRb.velocity = Vector3.zero;
+
+        // Build force vector: forward + arc
+        Vector3 force = shootDirection * actualForce;
+        force += Vector3.up * actualForce * upwardForceMultiplier;
+
+        ballRb.AddForce(force, ForceMode.Impulse);
     }
 
 }
