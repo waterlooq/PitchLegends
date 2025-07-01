@@ -1,15 +1,16 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class ArrowMove : MonoBehaviour
 {
     [Header("Arrow Direction Settings")]
+    public GameObject arrow;                 // Arrow GameObject (now used for direction)
     public float swingAngle = 45f;
     public float swingSpeed = 1f;
 
     [Header("Ball Settings")]
-    public Rigidbody ballRb;                  // Rigidbody for physics-based shooting
+    public Rigidbody ballRb;
     public float minPower = 5f;
     public float maxPower = 30f;
     public float upwardForceMultiplier = 0.5f;
@@ -31,7 +32,7 @@ public class ArrowMove : MonoBehaviour
 
     void Start()
     {
-        initialYRotation = transform.eulerAngles.y;
+        initialYRotation = arrow.transform.eulerAngles.y;
         powerMeter.SetActive(false);
     }
 
@@ -41,12 +42,12 @@ public class ArrowMove : MonoBehaviour
         {
             // Swinging arrow
             float angle = Mathf.Sin(Time.time * swingSpeed) * swingAngle;
-            transform.rotation = Quaternion.Euler(0f, initialYRotation + angle, 0f);
+            arrow.transform.rotation = Quaternion.Euler(0f, initialYRotation + angle, 0f);
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 swingSpeed = 0;
-                shootDirection = transform.forward;
+                shootDirection = arrow.transform.forward;
                 StartPowerMeter();
             }
         }
@@ -100,10 +101,7 @@ public class ArrowMove : MonoBehaviour
         isPowerSelecting = false;
         powerMeter.SetActive(false);
 
-        // Convert arrow height to 0–1 power value
         currentPower = Mathf.InverseLerp(powerBottom, powerTop, powerArrow.anchoredPosition.y);
-
-        // Map power to actual shot force
         actualForce = Mathf.Lerp(minPower, maxPower, currentPower);
 
         Debug.Log($"Power: {currentPower:F2}, Force: {actualForce:F2}");
@@ -113,14 +111,23 @@ public class ArrowMove : MonoBehaviour
     {
         isShooting = true;
 
-        // Reset ball velocity
         ballRb.velocity = Vector3.zero;
+        ballRb.angularVelocity = Vector3.zero;
 
-        // Build force vector: forward + arc
-        Vector3 force = shootDirection * actualForce;
-        force += Vector3.up * actualForce * upwardForceMultiplier;
-
+        Vector3 force = shootDirection * actualForce + Vector3.up * actualForce * upwardForceMultiplier;
         ballRb.AddForce(force, ForceMode.Impulse);
     }
+
+    public void BeginArrowSequence()
+    {
+        isShooting = false;
+        isPowerSelecting = false;
+        swingSpeed = 1f;
+        powerMeter.SetActive(false);
+        initialYRotation = arrow.transform.eulerAngles.y;
+
+        Debug.Log("Arrow sequence started after pass.");
+    }
+
 
 }
