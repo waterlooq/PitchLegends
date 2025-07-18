@@ -30,6 +30,8 @@ public class ArrowMove : MonoBehaviour
     private float actualForce = 0f;
     private Vector3 shootDirection;
 
+    public GoalieMove goalie;
+
     void Start()
     {
         initialYRotation = arrow.transform.eulerAngles.y;
@@ -62,9 +64,14 @@ public class ArrowMove : MonoBehaviour
             }
         }
 
+        if(isShooting == true)
+        {
+            goalie.Move();
+        }
+
         if (Input.GetKeyDown(KeyCode.R))
         {
-            SceneManager.LoadScene(0);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
 
@@ -116,6 +123,7 @@ public class ArrowMove : MonoBehaviour
 
         Vector3 force = shootDirection * actualForce + Vector3.up * actualForce * upwardForceMultiplier;
         ballRb.AddForce(force, ForceMode.Impulse);
+
     }
 
     public void BeginArrowSequence()
