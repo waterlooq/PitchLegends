@@ -6,6 +6,8 @@ public class GoalLineScript : MonoBehaviour
     public GameObject goalMessage;
     public AudioSource goalAudio;
 
+
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("ball"))
@@ -13,11 +15,6 @@ public class GoalLineScript : MonoBehaviour
             if (!goal)
             {
                 goal = true;
-                goalMessage.SetActive(true);
-                if (goalAudio != null)
-                {
-                    goalAudio.Play();
-                }
             }
         }
         else

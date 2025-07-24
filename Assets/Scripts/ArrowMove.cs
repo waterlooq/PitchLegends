@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Collections;
 
 public class ArrowMove : MonoBehaviour
 {
     [Header("Arrow Direction Settings")]
-    public GameObject arrow;                 // Arrow GameObject (now used for direction)
+    public GameObject arrow;
     public float swingAngle = 45f;
     public float swingSpeed = 1f;
 
@@ -31,6 +32,11 @@ public class ArrowMove : MonoBehaviour
     private Vector3 shootDirection;
 
     public GoalieMove goalie;
+    public GoalLineScript goalScript;
+    public GameObject goalMessage;
+    public GameObject failMessage;
+    public AudioSource goalAudio;
+    public AudioSource failAudio;
 
     void Start()
     {
@@ -42,7 +48,6 @@ public class ArrowMove : MonoBehaviour
     {
         if (!isShooting && !isPowerSelecting)
         {
-            // Swinging arrow
             float angle = Mathf.Sin(Time.time * swingSpeed) * swingAngle;
             arrow.transform.rotation = Quaternion.Euler(0f, initialYRotation + angle, 0f);
 
@@ -64,7 +69,7 @@ public class ArrowMove : MonoBehaviour
             }
         }
 
-        if(isShooting == true)
+        if (isShooting)
         {
             goalie.Move();
         }
@@ -124,6 +129,29 @@ public class ArrowMove : MonoBehaviour
         Vector3 force = shootDirection * actualForce + Vector3.up * actualForce * upwardForceMultiplier;
         ballRb.AddForce(force, ForceMode.Impulse);
 
+        StartCoroutine(CheckGoalAfterDelay());  // <--- Added coroutine call
+    }
+
+    private IEnumerator CheckGoalAfterDelay()
+    {
+        yield return new WaitForSeconds(1.5f);
+
+        if (goalScript.goal)
+        {
+            goalMessage.SetActive(true);
+            if (goalAudio != null)
+            {
+                goalAudio.Play();
+            }
+        }
+        else
+        {
+            failMessage.SetActive(true);
+            if (failAudio != null)
+            {
+                failAudio.Play();
+            }
+        }
     }
 
     public void BeginArrowSequence()
@@ -136,6 +164,4 @@ public class ArrowMove : MonoBehaviour
 
         Debug.Log("Arrow sequence started after pass.");
     }
-
-
 }
