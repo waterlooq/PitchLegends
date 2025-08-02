@@ -23,6 +23,19 @@ public class ArrowMove : MonoBehaviour
     public float powerTop = 150f;
     public float powerBottom = -150f;
 
+    [Header("Goal System")]
+    public GoalieMove goalie;
+    public GoalLineScript goalScript;
+    public GameObject goalMessage;
+    public GameObject failMessage;
+    public AudioSource goalAudio;
+    public AudioSource failAudio;
+    public float delay;
+
+    [Header("Level Progression")]
+    public int currentLevelIndex; // set this manually per scene (0 for Level 1, 1 for Level 2, etc.)
+    public string[] levelSceneNames; // assign all scene names in order in the inspector
+
     private float initialYRotation;
     private bool isPowerSelecting = false;
     private bool isShooting = false;
@@ -31,17 +44,16 @@ public class ArrowMove : MonoBehaviour
     private float actualForce = 0f;
     private Vector3 shootDirection;
 
-    public GoalieMove goalie;
-    public GoalLineScript goalScript;
-    public GameObject goalMessage;
-    public GameObject failMessage;
-    public AudioSource goalAudio;
-    public AudioSource failAudio;
-
     void Start()
     {
         initialYRotation = arrow.transform.eulerAngles.y;
         powerMeter.SetActive(false);
+
+        // Initialize unlocked levels if not already set
+        if (!PlayerPrefs.HasKey("UnlockedLevels"))
+        {
+            PlayerPrefs.SetInt("UnlockedLevels", 1); // Level 1 unlocked by default
+        }
     }
 
     void Update()
@@ -115,8 +127,6 @@ public class ArrowMove : MonoBehaviour
 
         currentPower = Mathf.InverseLerp(powerBottom, powerTop, powerArrow.anchoredPosition.y);
         actualForce = Mathf.Lerp(minPower, maxPower, currentPower);
-
-        Debug.Log($"Power: {currentPower:F2}, Force: {actualForce:F2}");
     }
 
     void ShootBall()
@@ -129,28 +139,47 @@ public class ArrowMove : MonoBehaviour
         Vector3 force = shootDirection * actualForce + Vector3.up * actualForce * upwardForceMultiplier;
         ballRb.AddForce(force, ForceMode.Impulse);
 
-        StartCoroutine(CheckGoalAfterDelay());  // <--- Added coroutine call
+        StartCoroutine(CheckGoalAfterDelay());
     }
 
     private IEnumerator CheckGoalAfterDelay()
     {
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(delay);
 
         if (goalScript.goal)
         {
             goalMessage.SetActive(true);
-            if (goalAudio != null)
-            {
-                goalAudio.Play();
-            }
+            if (goalAudio != null) goalAudio.Play();
+
+            UnlockNextLevel(); // Unlocks the next level
+            yield return new WaitForSeconds(3f); // Optional delay before loading
+            LoadNextLevel();
         }
         else
         {
             failMessage.SetActive(true);
-            if (failAudio != null)
-            {
-                failAudio.Play();
-            }
+            if (failAudio != null) failAudio.Play();
+        }
+    }
+
+    private void UnlockNextLevel()
+    {
+        int unlockedLevels = PlayerPrefs.GetInt("UnlockedLevels", 1);
+
+        // If current level index + 1 is higher than unlocked levels, update it
+        if (currentLevelIndex + 1 >= unlockedLevels && currentLevelIndex + 1 < levelSceneNames.Length)
+        {
+            PlayerPrefs.SetInt("UnlockedLevels", currentLevelIndex + 2);
+            PlayerPrefs.Save();
+        }
+    }
+
+    // Call this from a button when the player wants to load the next level
+    public void LoadNextLevel()
+    {
+        if (currentLevelIndex + 1 < levelSceneNames.Length)
+        {
+            SceneManager.LoadScene(levelSceneNames[currentLevelIndex + 1]);
         }
     }
 
@@ -161,7 +190,5 @@ public class ArrowMove : MonoBehaviour
         swingSpeed = 1f;
         powerMeter.SetActive(false);
         initialYRotation = arrow.transform.eulerAngles.y;
-
-        Debug.Log("Arrow sequence started after pass.");
     }
 }

@@ -4,31 +4,30 @@ public class GoalieMove : MonoBehaviour
 {
     [Header("References")]
     public GameObject ball;
+    public Transform leftPost;   // Assign in Inspector
+    public Transform rightPost;  // Assign in Inspector
 
     [Header("Movement Settings")]
     public float speed = 5f;
 
     private Vector3 currentPosition;
-    private Vector3 destination;
 
-    void Update()
-    {
-        // Optional: Automatically track the ball every frame
-        // Move();
-    }
-
-    // Call this method when the ball is shot or passed
     public void Move()
     {
-        if (ball == null) return;
+        if (ball == null || leftPost == null || rightPost == null) return;
 
         currentPosition = transform.position;
 
-        // Only move towards the ball's Z position
-        float targetZ = ball.transform.position.z;
+        // Get the min and max Z from posts
+        float minZ = Mathf.Min(leftPost.position.z, rightPost.position.z);
+        float maxZ = Mathf.Max(leftPost.position.z, rightPost.position.z);
+
+        // Target Z = ball Z, clamped to posts
+        float targetZ = Mathf.Clamp(ball.transform.position.z, minZ, maxZ);
+
+        // Smooth movement
         float newZ = Mathf.MoveTowards(currentPosition.z, targetZ, speed * Time.deltaTime);
 
-        // Keep X and Y the same
         transform.position = new Vector3(currentPosition.x, currentPosition.y, newZ);
     }
 }
