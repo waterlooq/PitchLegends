@@ -33,13 +33,14 @@ public class ArrowMove : MonoBehaviour
     public float delay;
 
     [Header("Level Progression")]
-    public int currentLevelIndex; // set this manually per scene (0 for Level 1, 1 for Level 2, etc.)
-    public string[] levelSceneNames; // assign all scene names in order in the inspector
+    public int currentLevelIndex;
+    public string[] levelSceneNames;
 
     private float initialYRotation;
     private bool isPowerSelecting = false;
     private bool isShooting = false;
     private bool powerGoingUp = true;
+    private bool shotOff = false;
     private float currentPower = 0f;
     private float actualForce = 0f;
     private Vector3 shootDirection;
@@ -49,10 +50,9 @@ public class ArrowMove : MonoBehaviour
         initialYRotation = arrow.transform.eulerAngles.y;
         powerMeter.SetActive(false);
 
-        // Initialize unlocked levels if not already set
         if (!PlayerPrefs.HasKey("UnlockedLevels"))
         {
-            PlayerPrefs.SetInt("UnlockedLevels", 1); // Level 1 unlocked by default
+            PlayerPrefs.SetInt("UnlockedLevels", 1);
         }
     }
 
@@ -86,10 +86,11 @@ public class ArrowMove : MonoBehaviour
             goalie.Move();
         }
 
-        if (Input.GetKeyDown(KeyCode.R))
+        if (shotOff == true && Input.GetKeyDown(KeyCode.R))
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
+
     }
 
     void StartPowerMeter()
@@ -151,12 +152,13 @@ public class ArrowMove : MonoBehaviour
             goalMessage.SetActive(true);
             if (goalAudio != null) goalAudio.Play();
 
-            UnlockNextLevel(); // Unlocks the next level
-            yield return new WaitForSeconds(3f); // Optional delay before loading
+            UnlockNextLevel();
+            yield return new WaitForSeconds(3f);
             LoadNextLevel();
         }
         else
         {
+            shotOff = true;
             failMessage.SetActive(true);
             if (failAudio != null) failAudio.Play();
         }
@@ -166,7 +168,6 @@ public class ArrowMove : MonoBehaviour
     {
         int unlockedLevels = PlayerPrefs.GetInt("UnlockedLevels", 1);
 
-        // If current level index + 1 is higher than unlocked levels, update it
         if (currentLevelIndex + 1 >= unlockedLevels && currentLevelIndex + 1 < levelSceneNames.Length)
         {
             PlayerPrefs.SetInt("UnlockedLevels", currentLevelIndex + 2);
@@ -174,7 +175,6 @@ public class ArrowMove : MonoBehaviour
         }
     }
 
-    // Call this from a button when the player wants to load the next level
     public void LoadNextLevel()
     {
         if (currentLevelIndex + 1 < levelSceneNames.Length)

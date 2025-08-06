@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GoalLineScript : MonoBehaviour
 {
@@ -6,7 +7,10 @@ public class GoalLineScript : MonoBehaviour
     public GameObject goalMessage;
     public AudioSource goalAudio;
 
-
+    private void Update()
+    {
+        
+    }
 
     private void OnTriggerEnter(Collider other)
     {

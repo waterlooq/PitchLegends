@@ -1,12 +1,19 @@
-﻿using UnityEngine;
+﻿using Cinemachine;
+using System.Net.Mail;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Pass : MonoBehaviour
 {
+    [Header("Mode Toggle")]
+    public bool isFinalPass = false;
+    public Pass nextPass;
+
     [Header("UI Elements")]
-    public RectTransform sliderArrow;       // The moving arrow (black line)
-    public RectTransform greenZone;         // The success green zone
-    public GameObject sliderUI;             // Whole UI container (panel)
+    public RectTransform sliderArrow;
+    public RectTransform greenZone;
+    public GameObject sliderUI;
 
     [Header("Arrow Movement")]
     public float moveSpeed = 200f;
@@ -19,21 +26,32 @@ public class Pass : MonoBehaviour
     public Transform passTarget;
     public Transform defender;
     public float passForce = 10f;
-    public float defenderInterceptTime = 0.5f;
     public Vector3 startPos;
+    public GameObject failMessage;
+    public AudioSource failAudio;
+
+    [Header("ArrowMove Reference")]
+    public ArrowMove arrowMoveScript;
 
     private bool isPassing = false;
+    private bool passOff = false;
+
+    [Header("Cameras")]
+    public CinemachineVirtualCamera cam1;
+    public CinemachineVirtualCamera cam2;
 
     void Start()
     {
         startPos = ball.transform.position;
         sliderUI.SetActive(false);
         StartPass();
+
+        cam1.Priority = 10;
+        cam2.Priority = 0;
     }
 
     void Update()
     {
-
         if (isPassing)
         {
             MoveSliderArrowVertically();
@@ -43,6 +61,12 @@ public class Pass : MonoBehaviour
                 EvaluatePass();
             }
         }
+
+        if(passOff == true && Input.GetKeyDown(KeyCode.R))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+
     }
 
     void StartPass()
@@ -51,7 +75,6 @@ public class Pass : MonoBehaviour
         isPassing = true;
         sliderUI.SetActive(true);
 
-        // Reset arrow to bottom of the bar (powerBottom)
         Vector2 pos = sliderArrow.anchoredPosition;
         pos.y = powerBottom;
         sliderArrow.anchoredPosition = pos;
@@ -91,6 +114,28 @@ public class Pass : MonoBehaviour
         if (arrowY >= greenMin && arrowY <= greenMax)
         {
             SuccessfulPass();
+
+            if (isFinalPass)
+            {
+                Debug.Log("✅ Final pass succeeded → Switching camera + shooting mode");
+
+                cam1.Priority = 0;
+                cam2.Priority = 10;
+
+                if (!arrowMoveScript.gameObject.activeInHierarchy)
+                    arrowMoveScript.gameObject.SetActive(true);
+
+                arrowMoveScript.enabled = true;
+
+                arrowMoveScript.BeginArrowSequence();
+
+                this.enabled = false;
+            }
+            else
+            {
+                nextPass.enabled = true;
+                this.enabled = false;
+            }
         }
         else
         {
@@ -102,26 +147,28 @@ public class Pass : MonoBehaviour
     {
         Rigidbody rb = ball.GetComponent<Rigidbody>();
         rb.velocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
 
         Vector3 direction = (passTarget.position - ball.position).normalized;
         rb.AddForce(direction * passForce, ForceMode.Impulse);
-
-        Debug.Log("✅ Pass Successful!");
-
     }
 
     void FailedPass()
     {
         Rigidbody rb = ball.GetComponent<Rigidbody>();
         rb.velocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
 
-        // Make the ball move towards the defender instead of pass target
         Vector3 direction = (defender.position - ball.position).normalized;
         rb.AddForce(direction * passForce, ForceMode.Impulse);
 
+        failMessage.SetActive(true);
+        if (failAudio != null) failAudio.Play();
+
+        passOff = true;
+
+        Debug.Log("❌ Pass failed! Defender intercepted.");
     }
-
-
 
     void StartDefenderIntercept()
     {
