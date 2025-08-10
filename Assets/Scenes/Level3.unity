@@ -1097,6 +1097,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   distanceToMove: 1.5
   speed: 5
+  pass: {fileID: 0}
+  isFreeKick: 1
 --- !u!1 &417954788
 GameObject:
   m_ObjectHideFlags: 0

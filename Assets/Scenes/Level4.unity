@@ -97,7 +97,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: 229dab711c36b2140ab9607df0184e1c, type: 2}
   m_LightingSettings: {fileID: 0}
 --- !u!196 &4
 NavMeshSettings:
@@ -4025,6 +4025,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   distanceToMove: 1.5
   speed: 5
+  pass: {fileID: 1812018055}
 --- !u!4 &1172362851 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2717525775360729391, guid: b2c23d075945f514a951a58dd9218b13, type: 3}
@@ -17591,6 +17592,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFinalPass: 1
+  nextPass: {fileID: 0}
   sliderArrow: {fileID: 4623476}
   greenZone: {fileID: 1177054142}
   sliderUI: {fileID: 1511498792}

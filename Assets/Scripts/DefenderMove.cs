@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DefenderMove : MonoBehaviour
 {
@@ -7,6 +8,10 @@ public class DefenderMove : MonoBehaviour
 
     private Vector3 startLocalPos;
     private bool movingRight = true;
+    public Pass pass;
+
+    public bool isFreeKick = false;
+    bool intercepted = false;
 
     void Start()
     {
@@ -28,5 +33,21 @@ public class DefenderMove : MonoBehaviour
         {
             movingRight = !movingRight;
         }
+
+        if(intercepted == true && Input.GetKeyDown(KeyCode.R))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.tag == "ball" && isFreeKick == false)
+        {
+            pass.FailedPass();
+            intercepted = true;
+        }
+    }
+
 }

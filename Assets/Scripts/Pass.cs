@@ -153,7 +153,7 @@ public class Pass : MonoBehaviour
         rb.AddForce(direction * passForce, ForceMode.Impulse);
     }
 
-    void FailedPass()
+    public void FailedPass()
     {
         Rigidbody rb = ball.GetComponent<Rigidbody>();
         rb.velocity = Vector3.zero;
