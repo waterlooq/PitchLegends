@@ -45,6 +45,9 @@ public class ArrowMove : MonoBehaviour
     private float actualForce = 0f;
     private Vector3 shootDirection;
 
+    public Vector3 startPosition;
+    public GameObject ball;
+
     void Start()
     {
         initialYRotation = arrow.transform.eulerAngles.y;
@@ -58,6 +61,7 @@ public class ArrowMove : MonoBehaviour
 
     void Update()
     {
+        // === AIMING STATE ===
         if (!isShooting && !isPowerSelecting)
         {
             float angle = Mathf.Sin(Time.time * swingSpeed) * swingAngle;
@@ -70,6 +74,7 @@ public class ArrowMove : MonoBehaviour
                 StartPowerMeter();
             }
         }
+        // === POWER METER STATE ===
         else if (isPowerSelecting)
         {
             MovePowerArrow();
@@ -81,18 +86,22 @@ public class ArrowMove : MonoBehaviour
             }
         }
 
+        // === GOALIE MOVEMENT ===
         if (isShooting)
         {
             goalie.Move();
         }
 
-        if (shotOff == true && Input.GetKeyDown(KeyCode.R))
+        // === RESET SYSTEM ===
+        if (shotOff && Input.GetKeyDown(KeyCode.R))
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            ResetShot();
         }
-
     }
 
+    // -------------------------
+    // START POWER METER
+    // -------------------------
     void StartPowerMeter()
     {
         isPowerSelecting = true;
@@ -101,6 +110,9 @@ public class ArrowMove : MonoBehaviour
         powerGoingUp = true;
     }
 
+    // -------------------------
+    // MOVE POWER ARROW
+    // -------------------------
     void MovePowerArrow()
     {
         Vector2 pos = powerArrow.anchoredPosition;
@@ -121,6 +133,9 @@ public class ArrowMove : MonoBehaviour
         powerArrow.anchoredPosition = pos;
     }
 
+    // -------------------------
+    // STOP POWER METER
+    // -------------------------
     void StopPowerMeter()
     {
         isPowerSelecting = false;
@@ -130,10 +145,14 @@ public class ArrowMove : MonoBehaviour
         actualForce = Mathf.Lerp(minPower, maxPower, currentPower);
     }
 
+    // -------------------------
+    // SHOOT BALL
+    // -------------------------
     void ShootBall()
     {
         isShooting = true;
 
+        // Reset physics before shooting
         ballRb.velocity = Vector3.zero;
         ballRb.angularVelocity = Vector3.zero;
 
@@ -143,6 +162,9 @@ public class ArrowMove : MonoBehaviour
         StartCoroutine(CheckGoalAfterDelay());
     }
 
+    // -------------------------
+    // CHECK GOAL RESULT
+    // -------------------------
     private IEnumerator CheckGoalAfterDelay()
     {
         yield return new WaitForSeconds(delay);
@@ -164,6 +186,45 @@ public class ArrowMove : MonoBehaviour
         }
     }
 
+    // -------------------------
+    // RESET SHOT SYSTEM (R KEY)
+    // -------------------------
+    void ResetShot()
+    {
+
+        goalie.ResetPosition();
+
+        // Stop all ball physics
+        ballRb.velocity = Vector3.zero;
+        ballRb.angularVelocity = Vector3.zero;
+
+        // Move ball back to starting position
+        ball.transform.position = startPosition;
+
+        // Reset states
+        shotOff = false;
+        isShooting = false;
+        isPowerSelecting = false;
+
+        // Hide fail message
+        if (failMessage.activeSelf)
+            failMessage.SetActive(false);
+
+        // Stop fail sound if playing
+        if (failAudio != null && failAudio.isPlaying)
+            failAudio.Stop();
+
+        // Reset arrow for aiming again
+        swingSpeed = 1f;
+        arrow.transform.rotation = Quaternion.Euler(0f, initialYRotation, 0f);
+
+        // Reset goal flag for next shot
+        goalScript.goal = false;
+    }
+
+    // -------------------------
+    // UNLOCK NEXT LEVEL
+    // -------------------------
     private void UnlockNextLevel()
     {
         int unlockedLevels = PlayerPrefs.GetInt("UnlockedLevels", 1);
@@ -175,6 +236,9 @@ public class ArrowMove : MonoBehaviour
         }
     }
 
+    // -------------------------
+    // LOAD NEXT LEVEL
+    // -------------------------
     public void LoadNextLevel()
     {
         if (currentLevelIndex + 1 < levelSceneNames.Length)
@@ -183,6 +247,9 @@ public class ArrowMove : MonoBehaviour
         }
     }
 
+    // -------------------------
+    // RESTART AIMING SEQUENCE
+    // -------------------------
     public void BeginArrowSequence()
     {
         isShooting = false;

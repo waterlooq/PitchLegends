@@ -11,6 +11,12 @@ public class GoalieMove : MonoBehaviour
     public float speed = 5f;
 
     private Vector3 currentPosition;
+    private Vector3 startPosition; // Store initial position
+
+    void Start()
+    {
+        startPosition = transform.position; // Save start position
+    }
 
     public void Move()
     {
@@ -26,5 +32,11 @@ public class GoalieMove : MonoBehaviour
         float newZ = Mathf.MoveTowards(currentPosition.z, targetZ, speed * Time.deltaTime);
 
         transform.position = new Vector3(currentPosition.x, currentPosition.y, newZ);
+    }
+
+    // New function to reset goalie to start position
+    public void ResetPosition()
+    {
+        transform.position = startPosition;
     }
 }

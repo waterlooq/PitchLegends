@@ -16810,6 +16810,9 @@ MonoBehaviour:
   failMessage: {fileID: 893370096}
   goalAudio: {fileID: 294017204}
   failAudio: {fileID: 1635155976}
+  delay: 0
+  currentLevelIndex: 0
+  levelSceneNames: []
 --- !u!4 &1812018054
 Transform:
   m_ObjectHideFlags: 0
@@ -16985,6 +16988,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ball: {fileID: 460227284}
+  leftPost: {fileID: 0}
+  rightPost: {fileID: 0}
   speed: 20
 --- !u!1 &1925288422
 GameObject:

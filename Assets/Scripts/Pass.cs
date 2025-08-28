@@ -1,5 +1,4 @@
 ﻿using Cinemachine;
-using System.Net.Mail;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -34,14 +33,17 @@ public class Pass : MonoBehaviour
     public ArrowMove arrowMoveScript;
 
     private bool isPassing = false;
-    private bool passOff = false;
+    public bool passFailed = false;
 
     [Header("Cameras")]
     public CinemachineVirtualCamera cam1;
     public CinemachineVirtualCamera cam2;
 
+    public Rigidbody ballRb;
+
     void Start()
     {
+        ballRb = ball.GetComponent<Rigidbody>();
         startPos = ball.transform.position;
         sliderUI.SetActive(false);
         StartPass();
@@ -56,22 +58,25 @@ public class Pass : MonoBehaviour
         {
             MoveSliderArrowVertically();
 
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Space) && passFailed == false)
             {
                 EvaluatePass();
             }
         }
 
-        if(passOff == true && Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R))
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
-
     }
 
     void StartPass()
     {
-        ball.transform.position = startPos;
+        // Reset ball state so it's free to move again
+        ballRb.isKinematic = false;
+        ballRb.velocity = Vector3.zero;
+        ballRb.angularVelocity = Vector3.zero;
+
         isPassing = true;
         sliderUI.SetActive(true);
 
@@ -117,8 +122,6 @@ public class Pass : MonoBehaviour
 
             if (isFinalPass)
             {
-                Debug.Log("✅ Final pass succeeded → Switching camera + shooting mode");
-
                 cam1.Priority = 0;
                 cam2.Priority = 10;
 
@@ -126,7 +129,6 @@ public class Pass : MonoBehaviour
                     arrowMoveScript.gameObject.SetActive(true);
 
                 arrowMoveScript.enabled = true;
-
                 arrowMoveScript.BeginArrowSequence();
 
                 this.enabled = false;
@@ -145,50 +147,44 @@ public class Pass : MonoBehaviour
 
     void SuccessfulPass()
     {
-        Rigidbody rb = ball.GetComponent<Rigidbody>();
-        rb.velocity = Vector3.zero;
-        rb.angularVelocity = Vector3.zero;
+        ballRb.velocity = Vector3.zero;
+        ballRb.angularVelocity = Vector3.zero;
 
         Vector3 direction = (passTarget.position - ball.position).normalized;
-        rb.AddForce(direction * passForce, ForceMode.Impulse);
+        ballRb.AddForce(direction * passForce, ForceMode.Impulse);
     }
 
     public void FailedPass()
     {
-        Rigidbody rb = ball.GetComponent<Rigidbody>();
-        rb.velocity = Vector3.zero;
-        rb.angularVelocity = Vector3.zero;
+        passFailed = true;
+        ballRb.velocity = Vector3.zero;
+        ballRb.angularVelocity = Vector3.zero;
 
         Vector3 direction = (defender.position - ball.position).normalized;
-        rb.AddForce(direction * passForce, ForceMode.Impulse);
+        ballRb.AddForce(direction * passForce, ForceMode.Impulse);
 
         failMessage.SetActive(true);
         if (failAudio != null) failAudio.Play();
 
-        passOff = true;
+        sliderUI.SetActive(false);
+        
 
-        Debug.Log("❌ Pass failed! Defender intercepted.");
-    }
-
-    void StartDefenderIntercept()
-    {
-        StartCoroutine(MoveDefenderToBall());
-    }
-
-    System.Collections.IEnumerator MoveDefenderToBall()
-    {
-        Vector3 start = defender.position;
-        Vector3 end = ball.position;
-        float duration = 0.1f;
-        float t = 0;
-
-        while (t < 1f)
+        if (!isFinalPass)
         {
-            t += Time.deltaTime / duration;
-            defender.position = Vector3.Lerp(start, end, t);
-            yield return null;
+            nextPass.enabled = false;
         }
+       
+    }
 
-        Debug.Log("⚠️ Defender reached the ball.");
+    private void OnCollisionEnter(Collision other)
+    {
+        // Stop ball immediately if it touches the teammate
+        if (other.gameObject.tag == "Teammate")
+        {
+            ballRb.velocity = Vector3.zero;
+            ballRb.angularVelocity = Vector3.zero;
+            ballRb.isKinematic = true; // freeze ball
+            Debug.Log("✅ Ball reached teammate!");
+        }
     }
 }
