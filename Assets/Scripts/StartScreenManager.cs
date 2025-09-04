@@ -9,6 +9,7 @@ public class StartScreenManager : MonoBehaviour
 
     public GameObject homeScreen;
     public GameObject controlScreen;
+    public GameObject creditScreen;
 
     // Start is called before the first frame update
     void Start()
@@ -33,10 +34,17 @@ public class StartScreenManager : MonoBehaviour
         controlScreen.SetActive(true);
     }
 
+    public void Credits()
+    {
+        homeScreen.SetActive(false);
+        creditScreen.SetActive(true);
+    }
+
     public void Back()
     {
         homeScreen.SetActive(true);
         controlScreen.SetActive(false);
+        creditScreen.SetActive(false);
     }
 
 }

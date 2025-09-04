@@ -30,6 +30,7 @@ public class ArrowMove : MonoBehaviour
     public GameObject failMessage;
     public AudioSource goalAudio;
     public AudioSource failAudio;
+    public AudioSource kickSound;
     public float delay;
 
     [Header("Level Progression")]
@@ -82,6 +83,7 @@ public class ArrowMove : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 StopPowerMeter();
+                kickSound.Play();
                 ShootBall();
             }
         }
@@ -200,6 +202,7 @@ public class ArrowMove : MonoBehaviour
 
         // Move ball back to starting position
         ball.transform.position = startPosition;
+        ballRb.GetComponentInChildren<TrailRenderer>().Clear();
 
         // Reset states
         shotOff = false;

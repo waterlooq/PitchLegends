@@ -39,4 +39,5 @@ public class GoalieMove : MonoBehaviour
     {
         transform.position = startPosition;
     }
+
 }

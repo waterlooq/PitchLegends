@@ -28,6 +28,7 @@ public class Pass : MonoBehaviour
     public Vector3 startPos;
     public GameObject failMessage;
     public AudioSource failAudio;
+    public AudioSource kickSound;
 
     [Header("ArrowMove Reference")]
     public ArrowMove arrowMoveScript;
@@ -72,7 +73,6 @@ public class Pass : MonoBehaviour
 
     void StartPass()
     {
-        // Reset ball state so it's free to move again
         ballRb.isKinematic = false;
         ballRb.velocity = Vector3.zero;
         ballRb.angularVelocity = Vector3.zero;
@@ -118,6 +118,7 @@ public class Pass : MonoBehaviour
 
         if (arrowY >= greenMin && arrowY <= greenMax)
         {
+            kickSound.Play();
             SuccessfulPass();
 
             if (isFinalPass)
@@ -156,6 +157,7 @@ public class Pass : MonoBehaviour
 
     public void FailedPass()
     {
+        kickSound.Play();
         passFailed = true;
         ballRb.velocity = Vector3.zero;
         ballRb.angularVelocity = Vector3.zero;
