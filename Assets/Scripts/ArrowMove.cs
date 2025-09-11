@@ -157,6 +157,7 @@ public class ArrowMove : MonoBehaviour
         // Reset physics before shooting
         ballRb.velocity = Vector3.zero;
         ballRb.angularVelocity = Vector3.zero;
+        ballRb.isKinematic = false;
 
         Vector3 force = shootDirection * actualForce + Vector3.up * actualForce * upwardForceMultiplier;
         ballRb.AddForce(force, ForceMode.Impulse);

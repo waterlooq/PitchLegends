@@ -45,6 +45,7 @@ public class Pass : MonoBehaviour
     void Start()
     {
         ballRb = ball.GetComponent<Rigidbody>();
+        ballRb.isKinematic = false;
         startPos = ball.transform.position;
         sliderUI.SetActive(false);
         StartPass();
@@ -123,6 +124,7 @@ public class Pass : MonoBehaviour
 
             if (isFinalPass)
             {
+
                 cam1.Priority = 0;
                 cam2.Priority = 10;
 
@@ -181,11 +183,12 @@ public class Pass : MonoBehaviour
     private void OnCollisionEnter(Collision other)
     {
         // Stop ball immediately if it touches the teammate
-        if (other.gameObject.tag == "Teammate")
+        if (other.gameObject.tag == "sdifjosijfd")
         {
             ballRb.velocity = Vector3.zero;
             ballRb.angularVelocity = Vector3.zero;
-            ballRb.isKinematic = true; // freeze ball
+            ballRb.isKinematic = true; // freeze 
+            ballRb.isKinematic = false;
             Debug.Log("✅ Ball reached teammate!");
         }
     }
