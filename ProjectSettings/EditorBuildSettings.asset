@@ -11,9 +11,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TeamSelect.unity
     guid: 0086fdc8b1981be41b55f0d96ffd0d8a
-  - enabled: 0
-    path: Assets/Scenes/Pass.unity
-    guid: dcaa522bf02a8db40850c23b1d6b0b5d
   - enabled: 1
     path: Assets/Scenes/Level1.unity
     guid: b57090505e202d74ebd0eb4d4886fdc0
