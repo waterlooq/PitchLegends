@@ -4,11 +4,11 @@ using UnityEngine.UI;
 
 public class Levels : MonoBehaviour
 {
-    [Header("Level Buttons (Assign 12 Buttons in Order)")]
-    public Button[] levelButtons; // Assign all 12 buttons in the Inspector
+    [Header("Level Buttons")]
+    public Button[] levelButtons;
 
-    [Header("Level Scene Names (Match Order of Buttons)")]
-    public string[] levelSceneNames; // Add all 12 scene names in correct order
+    [Header("Level Scene Names")]
+    public string[] levelSceneNames;
 
     void Start()
     {
@@ -20,7 +20,7 @@ public class Levels : MonoBehaviour
             {
                 levelButtons[i].interactable = true;
 
-                int index = i; // local copy for lambda
+                int index = i;
                 levelButtons[i].onClick.AddListener(() => LoadLevel(index));
             }
             else

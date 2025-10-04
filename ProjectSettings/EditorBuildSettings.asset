@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/Scenes/StartScreen.unity
     guid: 1a97de2b4588a7a488c3b075a3f3c5d2
   - enabled: 1
-    path: Assets/Scenes/TeamSelect.unity
+    path: Assets/Scenes/LevelSelect.unity
     guid: 0086fdc8b1981be41b55f0d96ffd0d8a
   - enabled: 1
     path: Assets/Scenes/Level1.unity
@@ -31,7 +31,7 @@ EditorBuildSettings:
     guid: 209f3b78b14db174e8f33a1b7f63631a
   - enabled: 1
     path: Assets/Scenes/Level7.unity
-    guid: 11e3335b57c1d6b4a8dd33fb139da2b4
+    guid: 5ebe20d4af74b25428b7af6e90113b16
   - enabled: 1
     path: Assets/Scenes/Level8.unity
     guid: 9b5414516cd3ad2489234ca5a5615bb0
@@ -48,6 +48,18 @@ EditorBuildSettings:
     path: Assets/Scenes/Level12.unity
     guid: 97299c8bff79fbc47999633acb699df5
   - enabled: 1
+    path: Assets/Scenes/Level13.unity
+    guid: 3d046330f4e33d940b52478d35cb3bae
+  - enabled: 1
+    path: Assets/Scenes/Level14.unity
+    guid: bccd8479235583847b3f3c524272a8e3
+  - enabled: 1
+    path: Assets/Scenes/Level15.unity
+    guid: 6f66506a45f7dd444b3018d26888b301
+  - enabled: 1
+    path: Assets/Scenes/Level16.unity
+    guid: a938fb9247db9b445b489dcb1c99a179
+  - enabled: 1
     path: Assets/Scenes/WinScreen.unity
-    guid: eb4efba4f47302e46a49b3c0eefe746d
+    guid: 3c76860bd5060064ea442cda8c61bfd2
   m_configObjects: {}

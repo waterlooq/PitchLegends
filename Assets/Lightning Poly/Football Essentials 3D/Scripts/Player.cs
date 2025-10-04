@@ -4,16 +4,8 @@ namespace LightningPoly.FootballEssentials3D
 
     public class Player : MonoBehaviour
     {
+        public GameObject[] decorations, eyes, mouths, hairs, all;
 
-         public GameObject[] decorations, eyes, mouths, hairs, all;
-
-        private void OnGUI()
-        {
-            if (GUILayout.Button("Change Character Appearance"))
-            {
-                ChangeCloth();
-            }
-        }
         [ContextMenu(nameof(ChangeCloth))]
         public void ChangeCloth()
         {
@@ -27,14 +19,9 @@ namespace LightningPoly.FootballEssentials3D
             hairs[Random.Range(0, hairs.Length)].SetActive(true);
         }
 
-
         void Start()
         {
 
         }
-
-        
     }
-
 }
-

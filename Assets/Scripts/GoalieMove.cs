@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GoalieMove : MonoBehaviour
 {
@@ -6,16 +7,17 @@ public class GoalieMove : MonoBehaviour
     public GameObject ball;
     public Transform leftPost;
     public Transform rightPost;
+    public GameObject pauseMenu;
 
     [Header("Movement Settings")]
     public float speed = 5f;
 
     private Vector3 currentPosition;
-    private Vector3 startPosition; // Store initial position
+    private Vector3 startPosition;
 
     void Start()
     {
-        startPosition = transform.position; // Save start position
+        startPosition = transform.position;
     }
 
     public void Move()
@@ -34,10 +36,28 @@ public class GoalieMove : MonoBehaviour
         transform.position = new Vector3(currentPosition.x, currentPosition.y, newZ);
     }
 
-    // New function to reset goalie to start position
+    // njew function to reset goalies position
     public void ResetPosition()
     {
         transform.position = startPosition;
+    }
+
+    public void Pause()
+    {
+        Time.timeScale = 0f;
+        pauseMenu.SetActive(true);
+    }
+
+    public void Resume()
+    {
+        Time.timeScale = 1f;
+        pauseMenu.SetActive(false);
+    }
+
+    public void Home()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(0);
     }
 
 }

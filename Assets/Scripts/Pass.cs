@@ -110,6 +110,7 @@ public class Pass : MonoBehaviour
 
     void EvaluatePass()
     {
+        ballRb.isKinematic = false;
         isPassing = false;
         sliderUI.SetActive(false);
 
@@ -150,6 +151,7 @@ public class Pass : MonoBehaviour
 
     void SuccessfulPass()
     {
+        ballRb.isKinematic = false;
         ballRb.velocity = Vector3.zero;
         ballRb.angularVelocity = Vector3.zero;
 
@@ -159,6 +161,7 @@ public class Pass : MonoBehaviour
 
     public void FailedPass()
     {
+        ballRb.isKinematic = false;
         kickSound.Play();
         passFailed = true;
         ballRb.velocity = Vector3.zero;
@@ -183,13 +186,11 @@ public class Pass : MonoBehaviour
     private void OnCollisionEnter(Collision other)
     {
         // Stop ball immediately if it touches the teammate
-        if (other.gameObject.tag == "sdifjosijfd")
+        if (other.gameObject.tag == "Teammate")
         {
             ballRb.velocity = Vector3.zero;
             ballRb.angularVelocity = Vector3.zero;
-            ballRb.isKinematic = true; // freeze 
-            ballRb.isKinematic = false;
-            Debug.Log("✅ Ball reached teammate!");
+            ballRb.isKinematic = true;
         }
     }
 }

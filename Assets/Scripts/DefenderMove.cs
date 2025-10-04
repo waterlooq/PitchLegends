@@ -3,8 +3,8 @@ using UnityEngine.SceneManagement;
 
 public class DefenderMove : MonoBehaviour
 {
-    public float distanceToMove = 3f;   // Total distance to travel left and right
-    public float speed = 2f;            // Movement speed
+    public float distanceToMove = 3f;
+    public float speed = 2f;
 
     private Vector3 startLocalPos;
     private bool movingRight = true;
@@ -20,27 +20,23 @@ public class DefenderMove : MonoBehaviour
 
     void Update()
     {
-        if (intercepted) return; // Stop moving when intercepted
+        if (intercepted) return; 
 
-        // Calculate movement direction
         float direction = movingRight ? 1f : -1f;
         transform.Translate(Vector3.right * direction * speed * Time.deltaTime, Space.Self);
 
-        // Measure how far we've moved from start
         float localXMoved = transform.localPosition.x - startLocalPos.x;
 
-        // Check boundary
         if (Mathf.Abs(localXMoved) >= distanceToMove)
         {
-            // Clamp the position so we don't overshoot
+            // freeze ball pos so it doesnt overshoot (GOTTA FIX THIS LATER)
             float clampedX = Mathf.Clamp(localXMoved, -distanceToMove, distanceToMove);
             transform.localPosition = new Vector3(startLocalPos.x + clampedX, transform.localPosition.y, transform.localPosition.z);
 
-            // Reverse direction only once
+            // Reverse direction only ONCE
             movingRight = !movingRight;
         }
 
-        // Allow restart on R
         if (intercepted && Input.GetKeyDown(KeyCode.R))
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
