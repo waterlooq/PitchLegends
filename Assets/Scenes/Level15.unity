@@ -20891,7 +20891,7 @@ MonoBehaviour:
   goalAudio: {fileID: 294017204}
   failAudio: {fileID: 1635155976}
   kickSound: {fileID: 1389183513}
-  delay: 2
+  delay: 2.5
   passDelay: 0
   currentLevelIndex: 14
   levelSceneNames:
