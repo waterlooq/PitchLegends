@@ -1,4 +1,5 @@
 ﻿using Cinemachine;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -44,10 +45,12 @@ public class Pass : MonoBehaviour
 
     void Start()
     {
+
         ballRb = ball.GetComponent<Rigidbody>();
         ballRb.isKinematic = false;
         startPos = ball.transform.position;
         sliderUI.SetActive(false);
+
         StartPass();
 
         cam1.Priority = 10;

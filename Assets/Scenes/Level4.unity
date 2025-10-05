@@ -25555,6 +25555,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ab8179ddb3494747a3f0464f0e5b820, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isFirstPass: 1
   isFinalPass: 1
   nextPass: {fileID: 0}
   sliderArrow: {fileID: 4623476}
