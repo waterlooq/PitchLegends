@@ -183,14 +183,4 @@ public class Pass : MonoBehaviour
        
     }
 
-    private void OnCollisionEnter(Collision other)
-    {
-        // Stop ball immediately if it touches the teammate
-        if (other.gameObject.tag == "Teammate")
-        {
-            ballRb.velocity = Vector3.zero;
-            ballRb.angularVelocity = Vector3.zero;
-            ballRb.isKinematic = true;
-        }
-    }
 }

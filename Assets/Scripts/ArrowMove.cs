@@ -39,9 +39,9 @@ public class ArrowMove : MonoBehaviour
     public string[] levelSceneNames;
 
     [Header("Wind Settings")]
-    public bool windEnabled = false;             // Default: off
-    public Vector3 windDirection = Vector3.zero; // Normalized direction
-    public float windStrength = 0f;              // Magnitude of wind
+    public bool windEnabled = false;
+    public Vector3 windDirection = Vector3.zero; 
+    public float windStrength = 0f;              
 
     private float initialYRotation;
     private bool isPowerSelecting = false;
@@ -63,20 +63,13 @@ public class ArrowMove : MonoBehaviour
         initialYRotation = arrow.transform.eulerAngles.y;
         powerMeter.SetActive(false);
 
-        //if (windEnabled)
-        //{
-        //    // Randomize wind if desired
-        //    windDirection = new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f)).normalized;
-        //    windStrength = Random.Range(1f, 5f); // Example strength
-        //}
-
         if (!PlayerPrefs.HasKey("UnlockedLevels"))
             PlayerPrefs.SetInt("UnlockedLevels", 1);
     }
 
     void Update()
     {
-        // Arrow swinging
+        // arrow swing befre shot
         if (!isShooting && !isPowerSelecting)
         {
             float angle = Mathf.Sin(Time.time * swingSpeed) * swingAngle;
@@ -119,7 +112,7 @@ public class ArrowMove : MonoBehaviour
     IEnumerator WaitOneSecond()
     {
         Debug.Log("Waiting...");
-        yield return new WaitForSeconds(passDelay);  // Delay for 1 second
+        yield return new WaitForSeconds(passDelay);
         ball.transform.position = startPosition;
         ballRb.velocity = Vector3.zero;
         ballRb.angularVelocity = Vector3.zero;
@@ -167,7 +160,6 @@ public class ArrowMove : MonoBehaviour
     {
         isShooting = true;
 
-        // Reset physics before shooting
         ballRb.velocity = Vector3.zero;
         ballRb.angularVelocity = Vector3.zero;
         ballRb.isKinematic = false;
@@ -180,13 +172,9 @@ public class ArrowMove : MonoBehaviour
 
     private void ApplyWindCurl()
     {
-        // Horizontal wind only
+
         Vector3 horizontalWind = new Vector3(windDirection.x, 0f, windDirection.z);
-
-        // Apply straight wind
         Vector3 windForce = horizontalWind * windStrength;
-
-        // Curl effect perpendicular to wind
         Vector3 curl = Vector3.Cross(Vector3.up, horizontalWind).normalized * (windStrength * 0.3f);
 
         ballRb.AddForce(windForce + curl, ForceMode.Acceleration);

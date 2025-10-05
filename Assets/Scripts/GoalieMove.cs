@@ -36,7 +36,7 @@ public class GoalieMove : MonoBehaviour
         transform.position = new Vector3(currentPosition.x, currentPosition.y, newZ);
     }
 
-    // njew function to reset goalies position
+    // function that resets goalies position (finally fixed this)
     public void ResetPosition()
     {
         transform.position = startPosition;
