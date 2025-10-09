@@ -62,6 +62,8 @@ public class GoalieMove : MonoBehaviour
     public void Home()
     {
         Time.timeScale = 1f;
+        audioPaused = false;
+        AudioListener.pause = audioPaused;
         SceneManager.LoadScene(0);
     }
 
