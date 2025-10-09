@@ -14,6 +14,7 @@ public class GoalieMove : MonoBehaviour
 
     private Vector3 currentPosition;
     private Vector3 startPosition;
+    private bool audioPaused;
 
     void Start()
     {
@@ -45,12 +46,16 @@ public class GoalieMove : MonoBehaviour
     public void Pause()
     {
         Time.timeScale = 0f;
+        audioPaused = true;
+        AudioListener.pause = audioPaused;
         pauseMenu.SetActive(true);
     }
 
     public void Resume()
     {
         Time.timeScale = 1f;
+        audioPaused = false;
+        AudioListener.pause = audioPaused;
         pauseMenu.SetActive(false);
     }
 

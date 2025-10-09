@@ -58,7 +58,6 @@ public class CornerKick : MonoBehaviour
 
     void Start()
     {
-        ResetBall();
 
         if (vcam1 != null && vcam2 != null)
         {
@@ -99,7 +98,7 @@ public class CornerKick : MonoBehaviour
 
         if (shotOff && Input.GetKeyDown(KeyCode.R))
         {
-            ResetCorner();
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
 
         if (teammateRunning)
@@ -236,36 +235,6 @@ public class CornerKick : MonoBehaviour
     {
         if (currentLevelIndex + 1 < levelSceneNames.Length)
             SceneManager.LoadScene(levelSceneNames[currentLevelIndex + 1]);
-    }
-
-    public void ResetCorner()
-    {
-        ResetBall();
-
-        shotOff = false;
-        isPowerSelecting = false;
-        ballInAir = false;
-        teammateRunning = false;
-
-        if (goalMessage.activeSelf) goalMessage.SetActive(false);
-        if (failMessage.activeSelf) failMessage.SetActive(false);
-
-        goalScript.goal = false;
-
-        if (vcam1 != null && vcam2 != null)
-        {
-            vcam1.Priority = 10;
-            vcam2.Priority = 0;
-        }
-
-        StartPowerMeter();
-    }
-
-    void ResetBall()
-    {
-        ballRb.isKinematic = true;
-        ballRb.transform.position = cornerSpot.position;
-        ballRb.transform.rotation = Quaternion.identity;
     }
 
     void SwitchCameraManual()
